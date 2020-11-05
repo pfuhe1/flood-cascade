@@ -1,0 +1,9 @@
+[submodule "submodels/fuse"]
+	path = submodels/fuse
+	url = git@github.com:pfuhe1/fuse.git
+[submodule "submodels/LFPtools"]
+	path = submodels/LFPtools
+	url = git@github.com:pfuhe1/LFPtools.git
+[submodule "submodels/mizuRoute"]
+	path = submodels/mizuRoute
+	url = https://github.com/NCAR/mizuRoute.git

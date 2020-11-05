@@ -1,0 +1,92 @@
+! ****************************************************************************************************************************
+! ****************************************************************************************************************************
+! ***** DEFINITION OF MODEL CONTROL INFORMATION ******************************************************************************
+! ****************************************************************************************************************************
+! ****************************************************************************************************************************
+! Note: lines starting with "!" are treated as comment lines -- there is no limit on the number of comment lines.
+!       lines starting with <xxx> are read till "!"
+!
+! ****************************************************************************************************************************
+! PART 1: DEFINE DIRECTORIES 
+! --------------------------
+<ancil_dir>       /home/pu17449/src/mizuRoute/route/ancillary_data/  ! directory containing ancillary data (runoff mapping data, river network data)
+<input_dir>        <INDIR>     ! directory containing input data (runoff data)
+<output_dir>       <OUTDIR>    ! directory containing output data
+! ****************************************************************************************************************************
+! PART 2: DEFINE TIME PERIOD OF THE SIMULATION
+! --------------------------------------------
+<sim_start>        <START>                       ! time of simulation start (year-month-day)
+<sim_end>          <END>                      ! time of simulation end (year-month-day)
+! ****************************************************************************************************************************
+! PART 3: DEFINE FINE NAME AND DIMENSIONS
+! ---------------------------------------
+<fname_ntopOld>    MERIT_mizuRoute_network.nc       ! netCDF name for River Network
+<dname_sseg>       segId                           ! dimension name of the stream segments
+<dname_nhru>       hruId                           ! dimension name of the HRUs
+!<ntopWriteOption>  F                               ! logical whether or not augmented river network is written 
+!<ntopAugmentMode>   T
+!<fname_ntopNew>    MERIT_mizuRoute_network_aug.nc   ! netCDF name for augmented River Network
+! ****************************************************************************************************************************
+! PART 4: DEFINE DESIRED VARIABLES FOR THE NETWORK TOPOLOGY
+! ---------------------------------------------------------
+<seg_outlet>       -9999                            ! seg_id of outlet streamflow segment. -9999 for all segments 
+! ****************************************************************************************************************************
+! PART 5: DEFINE RUNOFF FILE
+! ----------------------------------
+<fname_qsim>       <FIN>                           ! name of file containing the HRU runoff
+<vname_qsim>       q_instnt                        ! name of HRU runoff variable
+<vname_time>       time                            ! name of time variable 
+!<vname_hruid>      VARNAME_RO_HRU                  ! name of runoff HRU id variable (if 1D runoff vector is input)
+<dname_xlon>       longitude                       ! name of x(j) dimension (if 2D runoff grid is input)
+<dname_ylat>       latitude                        ! name of y(i) dimension (if 2D runoff grid is input)
+<dname_time>       time                            ! name of time dimension 
+!<dname_hruid>      DIMNAME_RO_HRU                  ! name of the HRU dimension (if 1D runoff vector is input) 
+<units_qsim>       mm/day                          ! units of runoff e.g., mm/s
+<dt_qsim>          86400                           ! time interval of the runoff [sec] e.g., 86400 sec for daily step
+! ****************************************************************************************************************************
+! PART 6: DEFINE RUNOFF MAPPING FILE 
+!  ----------------------------------
+<is_remap>              T                          ! logical whether or not runnoff needs to be mapped to river network HRU 
+<fname_remap>           MizuRoute_MERITnetwork-p1deg-mapping.nc     ! name of runoff mapping netCDF 
+<vname_hruid_in_remap>  hruId                      ! name of variable for river network HRUs within each river network HRU 
+<vname_weight>          weight                     ! name of variable for areal weights of runoff HRUs within each river network HRU
+!<vname_qhruid>          VARNAME_MAP_RO_HRU         ! name of variable for runoff HRU ID (if 1D runoff vector is input)
+<vname_num_qhru>        nOverlaps                  ! name of variable for a numbers of runoff HRUs within each river network HRU
+<dname_hru_remap>       hruId                      ! name of hru dimension (if 1D runoff vector is input)
+<dname_data_remap>      partID                     ! name of data dimension
+<vname_i_index>         i_index                    ! name of ylat index dimension (if 2D runoff grid is input) 
+<vname_j_index>         j_index                    ! name of xlon index dimension (if 2D runoff grid is input)
+! ****************************************************************************************************************************
+! PART 7 DEFINE RUN CONTROL 
+! ---------------------------
+<restart_opt>          F                           ! option to use saved flow states T->yes, F->No (start with empty channels) 
+<route_opt>            0                           ! option for routing schemes 0-> both, 1->IRF, 2->KWT otherwise error 
+! ****************************************************************************************************************************
+! PART 8: DEFINE OUTPUT FILE
+! ---------------------------
+<fname_output>         <OUTNAME>                            ! filename for the model output
+<fname_state_in>       state.out_deleteme.nc                ! filename for the channel states input 
+<fname_state_out>      state.out_deleteme.nc                ! filename for the channel states output
+! ****************************************************************************************************************************
+! Part 9: Define options to include/skip calculations
+! ----------------------------------------------------
+<hydGeometryOption>    1                           ! option for hydraulic geometry calculations (0=read from file, 1=compute)
+<topoNetworkOption>    1                           ! option for network topology calculations (0=read from file, 1=compute)
+<computeReachList>     1                           ! option to compute list of upstream reaches (0=do not compute, 1=compute)
+! ****************************************************************************************************************************
+! PART 10: Namelist file name 
+! ---------------------------
+<param_nml>            param.nml.default           ! Namelist name containing routing parameter values 
+! ****************************************************************************************************************************
+! Part 11: Dictionary to map variable names
+! ---------------------------
+<varname_area>         area                        ! name of variable holding hru area
+<varname_length>       length                      ! name of variable holding segment length
+<varname_slope>        slope                       ! name of variable holding segment slope
+<varname_HRUid>        hruId                       ! name of variable holding HRU id
+<varname_hruSegId>     hrusegId                    ! name of variable holding the stream segment below each HRU  
+<varname_segId>        segId                       ! name of variable holding the ID of each stream segment  
+<varname_downSegId>    downsegId                   ! name of variable holding the ID of the next downstream segment
+! ****************************************************************************************************************************
+! ****************************************************************************************************************************
+! ****************************************************************************************************************************
