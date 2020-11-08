@@ -12,9 +12,7 @@ import pickle
 ################################################################################
 # Input paths
 
-
-
-# Input directory containing DEM tiles (5degree increments) (note slopes were calcualted on epsg:3875)
+# Input directory containing DEM tiles (5degree increments)
 tiledir = '/export/anthropocene/array-01/pu17449/MeritDEM'
 # Shapefiles of catchment boundaries
 catchdir = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/shapefiles'
@@ -22,7 +20,7 @@ catchdir = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/sh
 processdir = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/tmp'
 # OUtput directory
 outdir = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/MeritDEM_catchments'
-# Pickle file containing mean values for slope over each catchment
+# Output pickle file containing mean values for slope over each catchment
 mean_out = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/MeritDEM_catchments.pkl'
 # Number of threads for processing in parallel
 numthreads = 4
@@ -78,7 +76,7 @@ for catchment in catchments:
 		# Just testing single catchment
 		#if int(catchid) != 1309810:
 		#	continue
-		
+
 		print('catchment',catchid)
 		outfile = os.path.join(outdir,'dem_'+catchid+'.tif')
 
@@ -122,7 +120,7 @@ for catchment in catchments:
 				# Clean up temporary files
 				for f in outfiles:
 					os.remove(f)
-	
+
 
 		# finally calculate average for catchment
 		f = gdal.Open(outfile)
@@ -137,9 +135,7 @@ for catchment in catchments:
 	except Exception,e:
 		print('Error processing catchment:',catchid)
 		print(e)
-	
+
 # Write out means to pickle file
 with open(mean_out,'wb') as f:
 	pickle.dump(meanvals,f,-1)
-	
-

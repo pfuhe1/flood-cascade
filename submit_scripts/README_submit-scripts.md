@@ -31,7 +31,7 @@ Other scripts to note:
 
 These are used in the `LISFLOOD-FP_prep` scripts to calibrate the 1D channel parameters in the LISFLOOD-FP model to be consistent with the discharge simulated by mizuRoute.
 - `calc_q_returnperiod.py`: Calculate a particular percentile flow of yearly maximum discharge correesponding to bankfull (e.g. 50 percentile). Reads in mizuRoute simulations, outputs netcdf file matching mizuRoute output with variable name 'IRFroutedRunoff'
-- `lisflood_setup_bankfullQ.py`: Calculates bankfull discharge at every point along the lisflood river network channels. Takes output file calculated above, and shapefiles representing the river network (calculated by `lisflood_discharge_inputs_qgis.py`)
+- `lisflood_setup_bankfullQ.py`: Calculates bankfull discharge at every point along the lisflood river network channels. Takes output file calculated above, and shapefiles representing the river network (calculated by `rivernet_prep/lisflood_discharge_inputs_qgis.py`)
 The output files from these scripts are then used to finalize the LISFLOOD-FP model before running the simulations.
 
 **Set-up simulations based on mizuRoute discharge**

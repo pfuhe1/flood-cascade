@@ -6,7 +6,7 @@ import netCDF4
 from osgeo import ogr
 
 ################################################################################
-# Set up paths etc. 
+# Set up paths etc.
 
 # Path for DEM files (cropped for each catchment)
 dem_dir = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/MeritDEM_catchments'
@@ -19,7 +19,7 @@ if not os.path.exists(elevbands_dir):
 
 # Shapefile representing catchments used. Requires attributes:
 # ID2: format 'GRDC XXXXXXX' specifying the GRDC catchment ID
-# StatLat, StatLon: approximate lat-lon for the catchment. 
+# StatLat, StatLon: approximate lat-lon for the catchment.
 catchments_metafile = '/export/anthropocene/array-01/pu17449/parameter_transfer_datasets/Beck2015_supplementary_data/Catchments.shp'
 
 # Load catchments metadata (for lat/lon of catchment)
@@ -36,7 +36,7 @@ x=0
 
 # Number of elevation bands to use for FUSE (user choice)
 nbands = 5
-# Note Error occured for some catchments, for those regions nbands = 5 was used 
+# Note Error occured for some catchments, for those regions nbands = 5 was used
 
 overwrite = False
 
@@ -52,19 +52,12 @@ frac = np.ones([n_outy,n_outx])
 band_elev = np.zeros([nbands,n_outy,n_outx])
 band_frac = np.zeros([nbands,n_outy,n_outx])
 
-# calculate (approx) grid box area
-#area_p5deg = (111000/2.)**2.
-# calculate weights (convert degrees to radians)
-#area1D = area_p5deg * np.cos(latvals/180.*np.pi)
-# repeat the 1D array across all longitudes
-#area = np.repeat(area1D[:,np.newaxis],n_outx,axis=1)
-
 for dem_file in glob.glob(os.path.join(dem_dir,'dem_*.tif')):
 	grdcid = os.path.basename(dem_file).split('_')[1][:-4]
-	
+
 	# Output file name
 	elevbands_file = os.path.join(elevbands_dir,'catchment_'+grdcid+'_elev_bands.nc')
-	
+
 	if overwrite or not os.path.exists(elevbands_file):
 		print('GRDCID:',grdcid)
 		try:
@@ -100,8 +93,8 @@ for dem_file in glob.glob(os.path.join(dem_dir,'dem_*.tif')):
 				subset = box[np.logical_and(box> bands[i],box<bands[i+1])]
 				band_elev[i,y,x] = subset.mean()
 				if i == nbands-1: # Handle last band separately
-					# Hack to make sure fracs sum to 1 
-					# (otherwise there is a small rounding error) 
+					# Hack to make sure fracs sum to 1
+					# (otherwise there is a small rounding error)
 					band_frac[i,y,x] = 1- band_frac[:-1,y,x].sum()
 				else:
 					band_frac[i,y,x] = len(subset)/npoints
@@ -144,7 +137,7 @@ for dem_file in glob.glob(os.path.join(dem_dir,'dem_*.tif')):
 
 			f_out.createVariable('area_frac',np.float32,('elevation_band', 'latitude', 'longitude'), fill_value=-9999)
 			f_out.variables['area_frac'].units = "-" ;
-			f_out.variables['area_frac'].long_name = "Fraction of grid cell covered by each elevation band." 
+			f_out.variables['area_frac'].long_name = "Fraction of grid cell covered by each elevation band."
 			f_out.variables['area_frac'][:] = band_frac
 
 			f_out.createVariable('mean_elev',np.float32,('elevation_band', 'latitude', 'longitude'),fill_value=-9999)

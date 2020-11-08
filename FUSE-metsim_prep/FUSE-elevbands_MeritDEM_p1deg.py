@@ -4,32 +4,33 @@ import os,glob,shutil,sys
 import netCDF4
 import matplotlib.pyplot as plt
 
-# Create FUSE elev_bands grid files for the GBM. 
+# Create FUSE elev_bands grid files for the GBM.
 # Also creates a 'domain' file for metsim (https://github.com/UW-Hydro/MetSim)
-# Assumes elevation data is provided by MeritDEM and FUSE grid is 0.1 degree resolution. 
+# Assumes elevation data is provided by MeritDEM and FUSE grid is 0.1 degree resolution.
 # Original file name: MeritDEM_regrid_elevs_GBM-p1deg.py
+
+griddir = '/export/anthropocene/array-01/pu17449/FUSE_inputs/grids'
 
 ################################################################################
 # Input paths
 
 # Input directory containing DEM tiles (5degree increments), downloaded from http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_DEM/
 # files have format e.g. n25e090_dem.tif
-dem_dir = '/export/anthropocene/array-01/pu17449/MeritDEM/' 
+dem_dir = '/export/anthropocene/array-01/pu17449/MeritDEM/'
 
-datadir = '/export/anthropocene/array-01/pu17449/FUSE_inputs/grids'
 # File containing output domain. Values are 0 or masked (-9999.)
-grid_template = os.path.join(datadir,'GBM-Grid_p1deg_v2.nc')
+grid_template = os.path.join(griddir,'GBM-Grid_p1deg_v2.nc')
 # Netcdf file, created by running command 'cdo gridarea' on grid template file
-grid_area = os.path.join(datadir,'gridarea_GBM-p1deg.nc')
+grid_area = os.path.join(griddir,'gridarea_GBM-p1deg.nc')
 
 #####################################
 # Ouptut paths
 
 # output 'domain' file for metsim
-outdomain_file = os.path.join(datadir,'domain_GBM-p1deg.nc')
+outdomain_file = os.path.join(griddir,'domain_GBM-p1deg.nc')
 
 # output elev_band file for FUSE:
-elevbands_file = os.path.join(datadir,'elev-bands_GBM-p1deg.nc')
+elevbands_file = os.path.join(griddir,'elev-bands_GBM-p1deg.nc')
 
 ##################################
 
@@ -69,7 +70,7 @@ band_frac = np.zeros([nbands,n_outy,n_outx],dtype=np.float32)
 # repeat the 1D array across all longitudes
 #area = np.repeat(area1D[:,np.newaxis],n_outx,axis=1)
 
-# Use grid area calculated by cdo 
+# Use grid area calculated by cdo
 with netCDF4.Dataset(grid_area,'r') as f_area:
 	area = f_area.variables['cell_area'][:]
 print('shape',area.shape)
@@ -79,7 +80,7 @@ tile_last = None
 for x,lon in enumerate(lonvals):
 	for y,lat in enumerate(latvals):
 		print('lon,lat',lon,lat,mask[y,x])
-		
+
 		if mask[y,x]:
 			tilex = str(int(5 * (lon // 5))).zfill(3)
 			tiley =str(int(5 * (lat // 5))).zfill(2)
@@ -95,7 +96,7 @@ for x,lon in enumerate(lonvals):
 			else:
 				tile_last = f_tile
 
-			# intial indices for gridbox in tile 
+			# intial indices for gridbox in tile
 			# (number of 0.1 degrees past the nearest 5 degrees) (Should0-49)
 #			yinit = 49-int((lat%5 - 0.05)*2) # Test flipping direction
 			yinit = 49-int((lat%5 - 0.05)*10) # Test flipping direction
@@ -139,13 +140,13 @@ for x,lon in enumerate(lonvals):
 			elev[y,x] = -9999.
 			band_frac[:,y,x] = -9999.
 			band_elev[:,y,x] = -9999.
-		
-	
+
+
 #print('debug, exiting without writing files')
 #sys.exit(1)
-	
+
 ###############################################################################
-# Write output file for modsim: 
+# Write output file for modsim:
 
 # Follows format of variables needed in 'domain' file for metsim e.g. '/home/bridge/pu17449/src/MetSim/metsim/data/domain.nc'
 with netCDF4.Dataset(outdomain_file,'w') as f_out_modsim:
@@ -219,7 +220,7 @@ with netCDF4.Dataset(elevbands_file,'w') as f_out:
 
 	f_out.createVariable('area_frac',np.float32,('elevation_band', 'latitude', 'longitude'), fill_value=-9999)
 	f_out.variables['area_frac'].units = "-" ;
-	f_out.variables['area_frac'].long_name = "Fraction of grid cell covered by each elevation band." 
+	f_out.variables['area_frac'].long_name = "Fraction of grid cell covered by each elevation band."
 	f_out.variables['area_frac'][:] = band_frac
 
 	f_out.createVariable('mean_elev',np.float32,('elevation_band', 'latitude', 'longitude'),fill_value=-9999)

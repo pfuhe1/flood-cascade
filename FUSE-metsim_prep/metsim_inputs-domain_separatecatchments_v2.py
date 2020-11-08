@@ -7,7 +7,7 @@ import numpy as np
 #
 def write_nc_catchment(fpath_out,f_in,lat,lon,catchment_vars):
 	with Dataset(fpath_out,'w') as f_out:
-	
+
 		f_out.createDimension('lat',1)
 		f_out.createVariable('lat',np.float,('lat'))
 		f_out.variables['lat'].standard_name = "latitude"
@@ -23,7 +23,7 @@ def write_nc_catchment(fpath_out,f_in,lat,lon,catchment_vars):
 		f_out.variables['lon'].units = "degrees_east"
 		f_out.variables['lon'].axis = "X"
 		f_out.variables['lon'][:] = lon
-		
+
 		for var in ['elev','mask','frac','area']:
 			invar = f_in.variables[var]
 			f_out.createVariable(var,invar.dtype,('lat','lon'))
@@ -33,10 +33,12 @@ def write_nc_catchment(fpath_out,f_in,lat,lon,catchment_vars):
 
 #############################################################################
 # Input paths
-#f_pkl2 = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/catchments_ewembi-grid_indices-excluded.pkl'
+
+# Pickle file calculated by catchment_forcings_part2 script
 f_pkl2 = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/catchments_ewembi-grid_indices-excluded_fixgeom.pkl'
-#fpath_in = '/home/pu17449/data2/metsim_data/domain_global-catchments_v2.nc'
+# Gridded elevations on grid from 60S-85N
 fpath_in = '/home/pu17449/data2/metsim_data/domain_global-tiled.nc'
+# Output directory
 outdir = '/home/pu17449/data2/metsim_data/catchment_domains_v2/'
 
 #############################################################################
@@ -49,19 +51,6 @@ with open(f_pkl2,'rb') as fdata:
 	# Indices dict is a dictionary of catchments, containing a list of points used
 	# NOTE: indices reference global grid, not 60s-85n grid (which has offset of 10 gridpoints)
 	indices_dict = pickle.load(fdata)
-
-
-
-## code for writing out flattened file
-#		for i,pt in enumerate(indices_set):
-#			print(i,pt)
-#			# Add offset for 60s-85n grid used as input
-#			glat = pt[0] - 10
-#			glon = pt[1]
-#			f_out.variables['pt_indices'][i,:] = pt
-#			f_out.variables['pr'][:,i] = f_in.variables['pr'][:,glat,glon]
-#			f_out.variables['tasmin'][:,i] = f_in.variables['tasmin'][:,glat,glon]
-#			f_out.variables['tasmax'][:,i] = f_in.variables['tasmax'][:,glat,glon]
 
 #############################################################################
 # Read in input data
@@ -83,7 +72,7 @@ with Dataset(fpath_in,'r') as f_in:
 			for i,pt in enumerate(indices):
 			# Add offset for 60s-85n grid used as input
 				glat = pt[0] - 10
-				glon = pt[1]	
+				glon = pt[1]
 				catchment_elev += elev[glat,glon]*areas[i]*1e6
 				catchment_area += areas[i]*1e6
 			# normalise weighted sum
@@ -101,20 +90,3 @@ with Dataset(fpath_in,'r') as f_in:
 			write_nc_catchment(fpath_out,f_in,lat,lon,catchment_vars)
 		else:
 			print('ERROR, no points for catchment: '+str(grdcid))
-
-#mask = np.zeros([290,720],dtype=np.bool)
-#for glat in range(290):
-#	for glon in range(720):
-#			gindex = (glat+10,glon)
-#			if gindex in indices_set:
-#				mask[glat,glon] = False
-#			else:
-#				mask[glat,glon] = True
-#
-#print('non masked points:',(~mask).sum())
-#
-#plt.figure()
-#plt.pcolormesh(mask[::-1])
-#plt.show()
-
-
