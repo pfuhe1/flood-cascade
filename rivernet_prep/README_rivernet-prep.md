@@ -10,3 +10,6 @@
  - 2a. python downsample_hydro.py --nwindow 3 --count_thresh 2 --max_start_acc 510 --datadir <DATADIR>
  - 2b. python call_streamnet_downsample.py --res '9s' --datadir <DATADIR>
  - <DATADIR> is the location of the river basin extracted by the 'lfp-split' script e.g. /home/pu17449/data2/lfp-tools/splitd8_v2
+
+
+ 3. `lisflood_discharge_inputs_qgis.py`: run in qgis python console to create shapefiles representing upstream accumulation for vertices in the river network. Used by `calc_q_returnperiod.py` and `lisflood_setup_bankfullQ.py` in `submit_scripts/lisflood-fp` folder. 

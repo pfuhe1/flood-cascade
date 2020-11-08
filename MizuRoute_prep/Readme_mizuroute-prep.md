@@ -1,7 +1,7 @@
-# Readme for Mizuroute river network preparation:
+## Readme for Mizuroute river network preparation:
 
 ########################################################################################################
-## Mizuroute river network ancillary file
+### Mizuroute river network ancillary file
 
 Requires outputs from TauDEM: stren_w3d8.tif, stren_net3d8.shp and catchment mask (basins3.tif).
 
@@ -25,7 +25,7 @@ Requires outputs from TauDEM: stren_w3d8.tif, stren_net3d8.shp and catchment mas
 
 
 ########################################################################################################
-## Runoff mapping data calculation
+### Runoff mapping data calculation
 
 **Reqires:**
 1. netcdf file with grid of latitude and longitude points (for grid cell centres) used by runoff model
@@ -37,19 +37,16 @@ Requires outputs from TauDEM: stren_w3d8.tif, stren_net3d8.shp and catchment mas
 1. Add geometry attributes (ellipsoidal method) to catchments file (adds area attribute)
 2. Split by lines: file from step 1 split using shapefile grid.
 3. Add geometry attributes (ellipsoidal method), to file from step 2 (adds area_2 attribute)
-4. Calculate centroids from file in step 3. 
+4. Calculate centroids from file in step 3.
 
 **Generate grid mapping file:**
 `python mizuRoute_grid_mapping.py`
 
 ########################################################################################################
 
-# Running Mizuroute:
-A template control file 'GBM-MERIT_p1deg_v2.control_template is included with specifications matching the input files produced above.
-Setup scripts to submit simulations to a cluster are included separately.
+### Running Mizuroute:
+Setup scripts to submit simulations to a cluster are included separately (setup_scripts/mizuRoute).
 
 Code tested from mizuRoute develop branch:
 commit 8992396f52dabed55699b03fb8b52c103e76da34
-Merge: a72ef46 7b9a9e7
-Author: Naoki Mizukami <mizukami@ucar.edu>
-Date:   Wed May 8 13:04:29 2019 -0600
+(git repository linked as a submodule in the submodels folder)

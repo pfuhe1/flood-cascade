@@ -46,6 +46,7 @@ basedir = '/work/pu17449/fuse/p1deg_catchments'
 #f_donor = '/mnt/storage/home/pu17449/src/fuse_processing/GBM-5deg_distances_GBM-hisnowIQR_reducedset.pkl'
 f_donors = '/home/pu17449/src/setup_scripts/fuse_GBM/GBM-p1deg_distances_GBM-reduced.pkl'
 
+# Elev bands file is used to extract grid and mask information.
 f_grid = os.path.join(griddir,'input/'+setup_name+'_elev_bands.nc')
 
 #########################################################################################
@@ -54,6 +55,7 @@ f_grid = os.path.join(griddir,'input/'+setup_name+'_elev_bands.nc')
 with Dataset(f_grid,'r') as f:
 	lons = f.variables['longitude'][:]
 	lats = f.variables['latitude'][:]
+	# Variable with mask for region simulated
 	gridref = f.variables['mean_elev'][0,:]
 
 

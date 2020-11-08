@@ -1,10 +1,10 @@
 FUSE_FILEMANAGER_V1.5
 ! *** paths
-'/work/pu17449/fuse/<setupname>/settings/'     ! SETNGS_PATH
-'/work/pu17449/fuse/<setupname>/input/'        ! INPUT_PATH
-'/work/pu17449/fuse/<setupname>/output/'       ! OUTPUT_PATH
+'<settings_dir>/'                ! SETNGS_PATH
+'<input_dir>/'                   ! INPUT_PATH
+'<output_dir>/'                  ! OUTPUT_PATH
 ! *** suffic for input files - the files must be in INPUT_PATH
-'_<forcing>_input.nc'        ! suffix_forcing     = suffix for forcing file to be append to basin_id / setup name
+'_<forcing>_input.nc'            ! suffix_forcing     = suffix for forcing file to be append to basin_id / setup name
 '_elev_bands.nc'                 ! suffix_elev_bands  = suffix for elevation bands file to be append to basin_id / setup name
 ! *** settings files - must be in SETNGS_PATH
 'input_info.txt'                 ! FORCING INFO       = definition of the forcing file
@@ -12,7 +12,7 @@ FUSE_FILEMANAGER_V1.5
 'fuse_zNumerix.txt'              ! MOD_NUMERIX        = definition of numerical solution technique
 'fuse_zDecisions_<decid>.txt'    ! M_DECISIONS        = definition of model decisions
 ! *** output files
-'<decid>_<calibid>_<forcing>' ! FMODEL_ID          = string defining FUSE model, only used to name output files
+'<decid>_<calibid>_<forcing>'    ! FMODEL_ID          = string defining FUSE model, only used to name output files
 'TRUE'                           ! Q_ONLY            = only write Q to output files (TRUE) or all variables (FALSE)
 ! *** dates
 '<s_sim>'                        ! date_start_sim     = date start simulation

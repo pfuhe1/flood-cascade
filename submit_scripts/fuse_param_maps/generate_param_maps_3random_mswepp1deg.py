@@ -90,7 +90,7 @@ for r in range(20):
 		f_out.variables['longitude'][:] = lons
 
 		for param,field in param_maps.items():
-			# Simple selection of output paramsdd
+			# Simple selection of output params
 			#if param[0].isupper()
 			var = f_out.createVariable(param,np.float,('latitude','longitude'),fill_value=-9999)
 			var.long_name = param_longname[param]
