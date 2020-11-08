@@ -1,4 +1,6 @@
-### README file for FUSE parameter regionalization.
+## README file for FUSE parameter regionalization.
+
+### Catchment characteristics
 
 Eight catchment characteristics were used to determine the (dis)similarity between cells in the gridded model domain and catchments from the GRDC archive:
 
@@ -18,9 +20,11 @@ Data processing scripts for these characteristics are provided as examples:
 - **characteristics_catchment**: Characteristics calculated over catchments. Output in python pickle files, where values are stored in a python dictionary with catchment IDs as the keys.
 
 ### Calculating similarity
-Scripts output python pickle files which provides an array of GRDC catchment IDs  matched to each grid-cell (shape [len(catchments),ny,nx]).
+Scripts calculate an array of GRDC catchment IDs  matched to each grid-cell (shape [len(catchments),ny,nx]).
 
 For each grid point the catchments IDs are sorted (from more to less similar), up to 10 catchments. Note: for the modelling, only parameter sets for the first 3 catchments were used.
 
 - 0.5 degree resolution grid: `parameter_transfer_p5deg-GBM_distances_v1-1.py`
 - 0.1 degree resolution grid: `parameter_transfer_p1deg-GBM_distances_v1-1.py`
+
+Output files are in python pickle format, to be used later by the script: `submit_scripts/fuse_gridded/generate_param_maps_3choices.py`.

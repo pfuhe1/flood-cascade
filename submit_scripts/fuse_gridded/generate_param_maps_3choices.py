@@ -2,48 +2,32 @@
 # Peter Uhe
 # June 2019
 #
-# Script to use anaconda and python3:
-# On bluecrystal:
-# module load languages/python-anaconda3-2019.03
-# source activate petepy
 
 import numpy as np
 import pickle,glob,os,sys
 from netCDF4 import Dataset
+# Import libraries for plotting:
 import matplotlib.pyplot as plt
 import matplotlib.cm
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 #########################################################################################
-# Input files
+# Model configuration names
 dec = 902
 setup_name = 'GBM-p1deg'
 # Name of observations (ideally would be the same, but they are renamed here)
-#calibversion0    = 'mswep-p1deg'  # string for observations used in catchment calibration
-#calibversion1 = 'MSWEP2-2-ERA5-calibrated' # string for observations used in GBM gridded model
-# Version where full time period of each catchments were used for calibration
-calibversion0 = 'mswep-p1deg-longeval'  # string for calibration observations used in catchment calibration
-calibversion1 = 'MSWEP2-2-ERA5-longcalib' # string for calibration observations used in GBM gridded model
+calibversion0    = 'mswep-p1deg'  # string for observations used in catchment calibration
+calibversion1 = 'MSWEP2-2-ERA5-calibrated' # string for observations used in GBM gridded model
 
-
-# for bc3:
-#griddir = '/newhome/pu17449/data/fuse/fuse_GBM_v2-2/'
-# for bc4:
-#griddir = '/mnt/storage/scratch/pu17449/fuse/fuse_GBM_v2-2'
-# for bp1:
+# Path for gridded model:
 griddir = '/work/pu17449/fuse/'+setup_name
 
-
-# for bc3:
-#basedir = '/newhome/pu17449/data/fuse/grdc_catchments/'
-#FOR bc4
-#basedir = '/mnt/storage/scratch/pu17449/fuse/grdc_catchments'
-# for bp1
+# Path for catchment models:
 basedir = '/work/pu17449/fuse/p1deg_catchments'
 
-# Donor catchments (calculated by script on pc: src/fuse_processing/parameter_transfer_p1deg-GBM_distances_v1-1.py
-#f_donor = '/mnt/storage/home/pu17449/src/fuse_processing/GBM-5deg_distances_GBM-hisnowIQR_reducedset.pkl'
+# Pickle file specifying donor catchments
+# (calculated by script FUSE_regionalization/parameter_transfer_p1deg-GBM_distances_v1-1.py)
 f_donors = '/home/pu17449/src/setup_scripts/fuse_GBM/GBM-p1deg_distances_GBM-reduced.pkl'
 
 # Elev bands file is used to extract grid and mask information.
@@ -57,7 +41,6 @@ with Dataset(f_grid,'r') as f:
 	lats = f.variables['latitude'][:]
 	# Variable with mask for region simulated
 	gridref = f.variables['mean_elev'][0,:]
-
 
 # Load donor catchments
 with open(f_donors,'rb') as f:
@@ -96,8 +79,10 @@ for choice in range(3):
 	param_longname = {}
 	param_units = {}
 	# Get list of parameters from an example parameter file
-	#with Dataset('/newhome/pu17449/data/fuse/grdc_catchments/fuse_grdc_4203910/output/grdc_4203910_900_para_sce.nc','r') as f:
-	with Dataset(os.path.join(basedir,'fuse_grdc_4120800/output/grdc_4120800_'+str(dec)+'_'+calibversion0+'_para_sce.nc'),'r') as f:
+	catchment = donor_indices.keys()[0]
+	f_param = os.path.join(basedir,'fuse_grdc_'+str(catchment),'output','grdc_'+str(catchment)+'_'+str(dec)+'_'+calibversion0+'_para_sce.nc')
+	print('Reading template parameter file and geting metadata:',f_param)
+	with Dataset(f_param,'r') as f:
 		param_list = list(f.variables.keys())
 		for param in param_list:
 			param_longname[param] = f.variables[param].long_name
