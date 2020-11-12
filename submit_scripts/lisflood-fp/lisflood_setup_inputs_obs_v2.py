@@ -1,8 +1,7 @@
 # lisflood_setup_inputs_obs_v2.py
 # Takes input from mizuRoute discharge, river network information and produces lisflood boundary conditions
-# Requires running first lisflood_discharge_inputs_qgis.py to produce shapefiles (streamnet)
-# Requires running first 077_main_lowres_v3_shiftregion.py (lisflood files)
-# Output of these script is then copied from PC to this server
+# Requires running first lisflood_discharge_inputs_qgis_clip.py to produce shapefiles (streamnet)
+# Requires running first main LISFLOOD-FP_prep script calling LFPTools scripts to generate lisflood-fp model files
 #
 # Peter Uhe
 # 2020/01/28
@@ -90,39 +89,21 @@ driver = ogr.GetDriverByName("ESRI Shapefile")
 # Parameters for this domain
 ###############################################################################################
 # extent xmin, xmax, ymin, ymax
-#extent = [89.03,89.95,24.5,26]
-#regname = 'rectclip-manndepth'
-#regname = 'rectclip-maskfpbank'
-ds_buffer = 0.1 # buffer around each reach to set the downstream boundary
-
-
-#extent = [89.081,90.3,24,26.5]
-#regname = 'rectlarger-maskbank'
-#regname = 'rectlarger-maskbankMSWEP'
-#regname = 'rectlarger-chansolverMSWEP_slopev2fix'
-#regname =  'rectlarger-chansolverMSWEP_2020-07-13'
-
 extent = [87.628,92.7379,21.13,26.681]
 regname = 'bangladesh-chansolverMSWEP_2020-11-02'
 
 ds_buffer = 0.3 # buffer around each reach to set the downstream boundary
 
-extentstr = str(extent)[1:-1]
 res = 0.0025 # in degrees
 resname = '9sd8'
 
 #res = 0.000833
 #resname = '3sd8'
 
-#resname = '9sd4'
 clipname = regname+'_'+resname
 
 # Pattern of name of mizuroute simulations to process (can contain wildcards '*','?' etc)
 mizuRuns = 'GBM-p1deg_900_MSWEP2-2-ERA5-calibrated1_MSWEP2-2-ERA5/q_*-1-1.nc'
-#mizuRuns = 'GBM-tiled2-2_90?_calibrated1/q_*.nc'
-# Domain to use
-#xbound = [89,90]
-#ybound = [24.5,26]
 
 startmon = 4 # april (1)
 endmon = 10 # october (31)
@@ -147,7 +128,6 @@ if host[:3]=='bp1':
 	qsub_script = '/home/pu17449/src/setup_scripts/lisflood_discharge/call_pythonscript_bp.sh'
 	control_script = '/home/pu17449/src/setup_scripts/lisflood_discharge/lisflood-fp_wrapper.py'
 	exe_file = '/home/pu17449/bin/lisflood_double_rect_r688'
-	#exe_file = '/home/pu17449/bin/lisflood_double_rect_trunk-r647'
 	ncpus = 24 # (node size is 24) # number of processors per job
 	jobsize = 24 # number of processors per simulation
 	simsperjob = 1
@@ -168,23 +148,16 @@ if not os.path.exists(lf_pardir):
 # Specify file paths (relative paths)
 ###############################################################################################
 # Shapefiles containing up/downstream points in each river segment/link
-# HACK to use d8 discharge locations
+# Use d8 discharge locations (needed if running model converted to d4)
 resname2 = resname[:2]+'d8'
-# Also remove the end bit of the clipname e.g. rectclip-maskbank -> rectclip-'manndepth'
-#clipname2 = regname.split('-')[0]+'-manndepth_'+resname2
 clipname2 = regname.split('-')[0]+'_'+resname2
-#streamdir = os.path.join(lfdir,'..','lisfloodfp_'+clipname2,'streamnet')
 f_downstream    = os.path.join(streamdir,clipname2+'_acc_downstream.shp')
 f_ntdstream    = os.path.join(streamdir,clipname2+'_acc_next-to-downstream.shp')
 f_upstream_clip = os.path.join(streamdir,clipname2+'_acc_upstream.shp')
 f_upstream_all  = os.path.join(streamdir,'strn_network_'+resname2+'_acc_upstream.shp')
 
 # parameter file template for lisflood
-# TODO, at the moment this is created manually, but could be automated a bit more
-#f_par_template = '/newhome/pu17449/data/lisflood/ancil_data/lisfloodfp_d89s_RectTest/077_template.par'
 f_par_template = os.path.join(lfdir,'077_template.par')
-#f_par_template = os.path.join(lfdir,'077_template_vout.par')
-# output bci file (only one needed to describe the discharge points of the network)
 f_bci = os.path.join(lf_dischargedir,clipname+'.bci')
 print('bcifile:',f_bci)
 
@@ -290,7 +263,7 @@ for link in links:
 	# Check if the downstream link is exiting into the ocean
 	# TODO: generalise to allow different fixed height or variable height (for tides/ storm surge)
 	dslink = dslinks[link]
-	if dslink<0:
+	if dslink<0: # ocean boundary
 		bc_str = 'P '+str(xd)+' '+str(yd)+' HFIX 0.0'
 		ds_bcs.append(bc_str)
 	elif xd - res*2 < extent[0]: # West
@@ -334,9 +307,7 @@ with Dataset(f_network,'r') as f:
 ###############################################################################################
 # Main script: Loop over discharge files and write out discharge values
 #
-#fpattern = os.path.join(mizuroute_outdir,'GBM-tiled2-2_904_calibrateRand0001_'+model+'_*_EWEMBI/q_*.nc')
-#fpattern = os.path.join(mizuroute_outdir,'GBM-tiled2-2_904_calibrated?','q_*.nc')
-fpattern = os.path.join(mizuroute_outdir,mizuRuns)#,'q_*.nc')
+fpattern = os.path.join(mizuroute_outdir,mizuRuns)
 for f_discharge in glob.glob(fpattern):
 	#f_discharge = '/home/pu17449/data2/mizuRoute/merithydro/q_GBM_MERIT-Hydro_1988-1-1.nc'
 	fname = os.path.basename(f_discharge)
@@ -487,8 +458,6 @@ for f_discharge in glob.glob(fpattern):
 		print('Submitting jobs',len(sublist))
 		os.environ['CONTROL_FLIST']=':'.join(sublist)
 		print(os.environ['CONTROL_FLIST'])
-#		subprocess.call(['qsub','-v','CONTROL_FLIST',qsub_script])
-		#qsub_cmd = ['qsub','-v','CONTROL_FLIST,EXE_FILE,LOGDIR,CONTROL_SCRIPT,LISFLOOD_DIR,NCPUS,OMP_NUM_THREADS,RESULTDIR',qsub_script]
 		print(' '.join(qsub_cmd))
 		if not dryrun:
 			subprocess.call(qsub_cmd)
@@ -502,12 +471,10 @@ if len(sublist)>0:
 	print('Submitting jobs',len(sublist))
 	os.environ['CONTROL_FLIST']=':'.join(sublist)
 	print(os.environ['CONTROL_FLIST'])
-	#qsub_cmd = ['qsub','-v','CONTROL_FLIST,EXE_FILE,LOGDIR,CONTROL_SCRIPT,LISFLOOD_DIR,NCPUS,OMP_NUM_THREADS,RESULTDIR',qsub_script]
 	print(' '.join(qsub_cmd))
 	if not dryrun:
 		subprocess.call(qsub_cmd)
 	else:
 		print('Dry run, not submitting')
-	#subprocess.call([qsub_script])
 else:
 	print('No more simulations to submit!')

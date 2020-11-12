@@ -1,0 +1,18 @@
+latlong
+SGCd8
+dirroot        results/<RUNNAME>
+resroot        <RUNNAME>
+sim_time       <SIMTIME>
+initial_tstep  10.0
+massint        86400.0
+saveint        86400.0
+fpfric         0.06
+SGCn           0.035
+bcifile        <BCI>
+bdyfile        <BDY>
+evaporation    077.evap
+DEMfile        077_dembnk.asc
+SGCbank        077_dembnk.asc
+SGCwidth       077_wdt-solver_9s_rectlarger.asc
+SGCbed         077_bed-solver_9s_rectlarger.asc
+SGCdirnfile    dir_d8_downsample_9s_rectlarger.asc

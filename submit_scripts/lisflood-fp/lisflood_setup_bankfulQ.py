@@ -1,8 +1,6 @@
-# lisflood_setup_inputs_obs_v2.py
-# Takes input from mizuRoute discharge, river network information and produces lisflood boundary conditions
-# Requires running first lisflood_discharge_inputs_qgis.py to produce shapefiles (streamnet)
-# Requires running first 077_main_lowres_v3_shiftregion.py (lisflood files)
-# Output of these script is then copied from PC to this server
+# lisflood_setup_bankfullQ.py
+# Takes input from mizuRoute maximum discharge at a particular percentile/return period (from 'calc_q_returnperiod.py')
+# Also requires running first lisflood_discharge_inputs_qgis.py to produce shapefiles (streamnet)
 #
 # Peter Uhe
 # 2020/01/28
@@ -111,15 +109,7 @@ runname = 'GBM-p1deg_MSWEP2-2-ERA5'
 #res = 0.0025
 
 host = socket.gethostname()
-if host[:7] == 'newblue':
-	# File, storing network attributes
-	f_network        = '/newhome/pu17449/src/mizuRoute/route/ancillary_data/MERIT_mizuRoute_network_meta.nc'
-	# Input dir for discharge
-	f_discharge = '/newhome/pu17449/data/mizuRoute/output/q_bankfull_50ile.nc'
-	# Lisflood directories
-	streamdir = '/newhome/pu17449/data/lisflood/ancil_data/bankfullq_'+resname
-
-elif host[:3]=='bp1':
+if host[:3]=='bp1':
 	# File, storing network attributes
 	f_network        = '/home/pu17449/src/mizuRoute/route/ancillary_data/MERIT_mizuRoute_network_meta.nc'
 	f_discharge      = '/work/pu17449/mizuRoute/output/q_bankfull_'+runname+'_50ile.nc'
@@ -133,8 +123,8 @@ elif host[:3]=='bp1':
 vertices_file = os.path.join(streamdir,'strn_network_'+resname+'_vertices.shp')
 f_ntdstream    = os.path.join(streamdir,'strn_network_'+resname+'_acc_next-to-downstream.shp')
 f_upstream  = os.path.join(streamdir,'strn_network_'+resname+'_acc_upstream.shp')
-#bankfull_shp = os.path.join(streamdir,'strn_network_'+resname+'_bankfullq.shp')
-#bankfull_tif = os.path.join(streamdir,'strn_network_'+resname+'_bankfullq.tif')
+
+# Output files
 bankfull_shp = os.path.join(streamdir,'strn_network_'+resname+'_'+runname+'_bankfullq.shp')
 bankfull_tif = os.path.join(streamdir,'strn_network_'+resname+'_'+runname+'_bankfullq.tif')
 
@@ -280,16 +270,9 @@ for link in links:
 		downacc = acc_ntd[link]
 		q_upstream[link] = q_downstream[link]*(upacc/downacc)
 	else:
-		# Options:
-		# 1. set q_upstream equal to q_downstream (to have constant q across whole reach)
+		# set q_upstream equal to q_downstream (to have constant q across whole reach)
 		# Unless this is greater than the sum of the upstream links, then set to this sum
 		q_upstream[link] = min(q_downstream[link], q_downstream[uslink1]+q_downstream[uslink2])
-		# 2. Reduce q from downstream to upstream by accumulation, (as per headwater catchment)
-		# Require the q_upstream has to be at least as large as its larger upstream tributary
-		# q_upstream[link] = max ( q_downstream[link]*(upacc/downacc), max(q_downstream[uslink1],q_downstream[uslink2]))
-
-
-# Loop over all vertices, interpolate q between upstream and downstream
 
 # First copy vertices data to bankfullq shapefile
 for ext in ['.dbf','.prj','.shp','.shx','.qpj']:
@@ -304,6 +287,7 @@ print('Opened All Vertices',bankfull_shp)
 newfield = ogr.FieldDefn('bankfullq', ogr.OFTReal)
 points.CreateField(newfield)
 
+# Loop over all vertices, interpolate q between upstream and downstream
 for feature in points:
 	# Get attributes
 	link = feature.GetField('LINKNO')

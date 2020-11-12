@@ -119,24 +119,3 @@ def calc_recurrence(flist,fout,depth_thresh,tmpdir='/run/user/335970'):
 	print(' '.join(gdal_cmd))
 	outstr = subprocess.check_output(gdal_cmd)
 	os.remove(sumfile)
-
-if __name__=='__main__':
-	# test case
-	#convert_to_tif_v2('/newhome/pu17449/data/lisflood/ancil_data/lisfloodfp_d89s_RectTest/GBM-tiled2-2_904_calibrateRand0001_NorESM1-HAPPI_All-Hist_run018_EWEMBI_2012','GBM-tiled2-2_904_calibrateRand0001_NorESM1-HAPPI_All-Hist_run018_EWEMBI_2012')
-	#basedir = '/home/pu17449/work/lisflood/lisfloodfp_rectclip-manndepth_9sd8/results'
-	#basedir = '/work/pu17449/lisflood/lisfloodfp_rectlarger-maskbank_9sd8/results'
-	#basedir = '/work/pu17449/lisflood/lisfloodfp_rectlarger-chansolverMSWEP_slopev2fix_9sd8/results'
-	basedir = '/work/pu17449/lisflood/lisfloodfp_rectlarger-chansolverMSWEP_2020-07-13_3sd8/results'
-	# test case 2:
-	#for outdir in glob.glob(basedir+'/*'):
-	#	sim_name = os.path.basename(outdir)
-	#	convert_to_tif_v3(outdir,sim_name,jobsize=4)
-
-	# test single one:
-	#convert_to_tif_v4('/work/pu17449/lisflood/lisfloodfp_rectlarger-maskbankMSWEP_9sd8/results/GBM-p1deg_904_MSWEP2-2-ERA5-calibrated3_MSWEP2-2-ERA5_2010','GBM-p1deg_904_MSWEP2-2-ERA5-calibrated3_MSWEP2-2-ERA5_2010')
-
-	# Test  calc_recurrence
-	maxfiles = glob.glob(os.path.join(basedir,'*900*','*-max.tif'))
-	depth_thresh = 0.5
-	frecurrence = os.path.join(basedir,'recurrence_MSWEP-2020-07-13_'+str(depth_thresh)+'m.tif')
-	calc_recurrence(maxfiles,frecurrence,depth_thresh)

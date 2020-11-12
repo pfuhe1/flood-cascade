@@ -3,6 +3,9 @@ from netCDF4 import Dataset,num2date
 import multiprocessing
 from catchment_obsforcings_func import merge_obs
 
+# Loops over files for individual catchments
+# Run Metsim using the inputs from script `metsim_splitstate_ERA5_mswep_separatecatchments.py`
+# Then creates FUSE input files
 
 def write_metsim_conf(state,forcing,domain,f_conf,outdir,outprefix):
 

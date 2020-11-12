@@ -93,17 +93,11 @@ def parse_grdc_file(fname,netcdf_out=None,override=False):
 
 if __name__ == '__main__':
 
-	host = socket.gethostname()
-
 	override = False
 
 	# Set output path
-	if host == 'Peters-MacBook-Pro.local':
-		fpath_in  = '/Users/pete/OneDrive - University of Bristol/data2/Discharge Data/GRDC_daily_global/textfiles/*_Q_Day.Cmd.txt'
-		fpath_out = '/Users/pete/OneDrive - University of Bristol/data2/Discharge Data/GRDC_daily_global/netcdf_v2-1'
-	else:
-		fpath_in = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/textfiles/*_Q_Day.Cmd.txt'
-		fpath_out = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/netcdf_v2-1'
+	fpath_in = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/textfiles/*_Q_Day.Cmd.txt'
+	fpath_out = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/netcdf_v2-1'
 
 	if not os.path.exists(fpath_out):
 		os.mkdir(fpath_out)

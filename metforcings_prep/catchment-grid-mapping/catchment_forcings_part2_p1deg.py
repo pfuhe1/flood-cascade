@@ -1,13 +1,10 @@
 # Peter Uhe 7/10/2019
 # This script is part of a series of scripts and needs to be run after 'catchment_forcings_part1_p1deg.py'
-# This script takes the pickle file containing points in each catchment, and matches them to grid indices in the grid_path file. 
+# This script takes the pickle file containing points in each catchment, and matches them to grid indices in the grid_path file.
 
-# THis script needs to be run from the anaconda environment petepy
+# THis script needs to be run from a python console
 # (the qgis console doesn't work with netCDF4)
-#
-# Run by using these commands: 
-# source activate petepy
-# python catchment_forcings_part2.py
+
 
 import os,sys,glob,pickle
 import numpy as np

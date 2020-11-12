@@ -15,9 +15,9 @@ Steps 1. and 2. use QGIS processing, so are run using the QGIS python console.
 ### Catchment based model inputs:
 Calculate FUSE inputs for calibration of catchments from the GRDC archive.
 
-Uses global gridded data matching the inputs to the gridded model. Additionally processes observed daily river discharge timeseries from GRDC. 
+Uses global gridded data matching the inputs to the gridded model. Additionally processes observed daily river discharge timeseries from GRDC.
 1. `parse_grdc_v2-1.py`: Converts GRDC discharge textfiles into netcdf format with variable 'q_obs'.
 2. `metsim_inputs_ERA5_mswep_separatecatchments_loopappend.py`: Loops over list of catchments and produces averages of daily pr,tas,tasmin,tasmax variables for each catchment. Requires global gridded data, list of catchment IDs to process and pickle file containing catchment indices (pickle file calculated above).
 3. `metsim_merge_ERA5_mswep_separatecatchments.py`: merges pr,tasmin,tasmax variables into a single file for each catchment
 4. `metsim_splitstate_ERA5_mswep_separatecatchments.py`: Splits up file from step 3 into two files required by MetSIM (first 90 days go into 'state' file, and rest of time series into 'forcing' file.)
-5. `metsim_prepdata_mswep_p1deg.py`:  Runs MetSim, using the inputs from step 5. Constructs FUSE input files for each catchment, combining pet, tas and q_obs
+5. `metsim_prepdata_mswep_p1deg.py`:  Runs MetSim, using the inputs from step 4. Constructs FUSE input files for each catchment, combining pet, tas and q_obs

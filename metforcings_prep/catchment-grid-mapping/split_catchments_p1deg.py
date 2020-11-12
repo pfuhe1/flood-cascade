@@ -1,14 +1,10 @@
-# THis script needs to be run from the qgis console otherwise doesn't seem to work...
-# Run by using this command: 
-# exec(open('/home/pu17449/src/fuse_processing/split_catchments_p1deg.py').read())
+# THis script needs to be run from the qgis console otherwise can't access the QGIS processing library
+#
+# Run by using this command:
+# exec(open('/home/pu17449/src/flood-cascade/metforcings_prep/split_catchments_p1deg.py').read())
 import os,sys,glob
-from qgis.core import (
-    QgsVectorLayer,
-)
-
-# Location of the processing directory (if I can get it to work outside of qgis)
-#sys.path.append('/usr/share/qgis/python/plugins')
-import processing
+from qgis.core import (QgsVectorLayer,)
+import processing # QGIS processing library
 
 # Set paths
 indir = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/shapefiles'
@@ -18,7 +14,6 @@ override=True
 
 if not os.path.exists(outdir):
 	os.mkdir(outdir)
-
 
 # Open grid lines vector layer
 lines_path = os.path.join(QgsProject.instance().homePath(), "..", "data2", "MSWEP2-2_010deg/lines_p1deg.shp")
@@ -46,7 +41,7 @@ for catchment in glob.glob(os.path.join(indir,'*_smoothed*.shp')):
 				cmd_dict = {'INPUT':clayer,'LINES':lines,'OUTPUT':outfile}
 				split_catchment = processing.run('native:splitwithlines',cmd_dict)
 				print('Done Split!')
-	
+
 			# Next we want to calculate area fraction of each subset:
 			#processing.algorithmHelp('qgis:exportaddgeometrycolumns')
 			outfile2 = os.path.join(outdir,cname+'_p1degsplit_areas.shp')
@@ -63,11 +58,11 @@ for catchment in glob.glob(os.path.join(indir,'*_smoothed*.shp')):
 				cmd3_dict = { 'INPUT' : outfile2, 'ALL_PARTS' : False, 'OUTPUT' : outfile3 }
 				processing.run('native:centroids',cmd3_dict)
 				print('Done centroids calculation')
-		
-			continue 
+
+			continue
 
 			# For debugging errors
-			
+
 			# Load outfile3
 			catchment3 = QgsVectorLayer(outfile3, "Catchment areas added", "ogr")
 			features = catchment3.getFeatures()
@@ -84,7 +79,7 @@ for catchment in glob.glob(os.path.join(indir,'*_smoothed*.shp')):
 						#print("Point: ", x)
 						points.append(x)
 				areas.append(feature['area_2']*1e-6)
-			
+
 				#attrs = feature.attributes()
 				# attrs is a list. It contains all the attribute values of this feature
 				#print(attrs)

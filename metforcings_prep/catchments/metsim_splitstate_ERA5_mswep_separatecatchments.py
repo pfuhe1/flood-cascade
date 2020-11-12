@@ -4,12 +4,9 @@ import numpy as np
 
 # Peter Uhe Nov 2019:
 #
-# Read in global datasets of metsim/fuse input variables
-# Select data at indices for each catchment
-# Write out data for each catchment to netcdf
-#
-# This version: Use xarray for multi-file open with netcdf4 as this is not supported by netCDF4.MFDataset
-
+# Loop over catchments
+# Reads in data calculated by `metsim_merge_ERA5_mswep_separatecatchments.py`
+# Splits 'metsim-forcing' file into a state file (first 90 days) and 'forcing' file (remainder of the timeseries)
 
 #############################################################################
 # Input paths

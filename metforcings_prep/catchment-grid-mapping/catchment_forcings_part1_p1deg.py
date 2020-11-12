@@ -4,20 +4,13 @@
 
 # THis script needs to be run from the qgis console otherwise doesn't seem to work...
 # Run by using this command:
-# exec(open('/home/pu17449/src/fuse_processing/catchment_forcings_part1.py').read())
+# exec(open('/home/pu17449/src/flood-cascade/metforcings_prep/catchment_forcings_part1_p1deg.py').read())
+
 import os,sys,glob,pickle
-
-#sys.path.append('/usr/lib/python3/dist-packages')
-from qgis.core import (
-    QgsVectorLayer,
-)
-
-# Location of the processing directory (if I can get it to work outside of qgis)
-#sys.path.append('/usr/share/qgis/python/plugins')
-import processing
+from qgis.core import (QgsVectorLayer,)
+import processing # QGIS processing library
 
 # Set paths
-
 centroids_path = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/shapefiles_processing_p1deg'
 f_pkl = '/home/pu17449/data2/Discharge Data/GRDC_daily_global/catchments_p1deggrid_indices.pkl'
 

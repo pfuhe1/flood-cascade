@@ -1,8 +1,5 @@
-# lisflood_setup_inputs_obs_v2.py
-# Takes input from mizuRoute discharge, river network information and produces lisflood boundary conditions
-# Requires running first lisflood_discharge_inputs_qgis.py to produce shapefiles (streamnet)
-# Requires running first 077_main_lowres_v3_shiftregion.py (lisflood files)
-# Output of these script is then copied from PC to this server
+# calc_q_returnperiod.py
+# Takes input from mizuRoute discharge and calculate yearly maximum values, then a percentile e.g. 50th percentile to use as bankfull discharge
 #
 # Peter Uhe
 # 2020/01/28
@@ -27,14 +24,7 @@ warnings.filterwarnings("error")
 # Then load that data into a big array
 #
 host = socket.gethostname()
-if host[:7] == 'newblue':
-	# Input dir for discharge
-	mizuroute_outdir = '/newhome/pu17449/data/mizuRoute/output'
-	runname0 = 'GBM_EWEMBI'
-	fpattern = os.path.join(mizuroute_outdir,'GBM-tiled2-2_90?_calibrated?','q_*.nc')
-	# Template file to use for output
-	template = os.path.join(mizuroute_outdir,'template.nc')
-elif host[:3]=='bp1':
+if host[:3]=='bp1':
 	mizuroute_outdir = '/work/pu17449/mizuRoute/output/'
 	runname0 = 'GBM-p1deg_MSWEP2-2-ERA5'
 	fpattern = os.path.join(mizuroute_outdir,'GBM-p1deg_90?_MSWEP2-2-ERA5-calibrated?_MSWEP2-2-ERA5','q_*.nc')
@@ -42,7 +32,6 @@ elif host[:3]=='bp1':
 	template = os.path.join(mizuroute_outdir,'template.nc')
 percentile = 50 # percentile assumed for bankfull flow
 
-#fpattern = os.path.join(mizuroute_outdir,'GBM-tiled2-2_904_calibrateRand0001_'+model+'_*_EWEMBI/q_*.nc')
 yrmax_dir = os.path.join(mizuroute_outdir,'yrmax_data')
 files = glob.glob(fpattern)
 fulldata = np.zeros([len(files),3527]) # river segment

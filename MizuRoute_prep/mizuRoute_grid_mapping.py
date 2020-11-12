@@ -1,4 +1,4 @@
-# HDMA_EWEMBI_mapping
+# mizuRoute_grid_mapping.py
 #
 # Peter Uhe
 # May 2019
@@ -62,7 +62,7 @@ def find_closest_1d_v2(p_lat,p_lon,lat_coord,lon_coord):
 ###############################################################################################
 
 if __name__=='__main__':
-	
+
 	# Parse command line arguments
 	parser = argparse.ArgumentParser(description='Calculate mizuRoute river network ancillary file')
 	parser.add_argument('-m','--mizunet',help = 'Mizuroute river network file calculated by mizuRoute_rivernet.py')
@@ -80,7 +80,7 @@ if __name__=='__main__':
 
 	# Set up Shapefile reading driver
 	driver = ogr.GetDriverByName("ESRI Shapefile")
-	
+
 	if not os.path.exists(f_out) or overwrite:
 
 		if os.path.exists(f_out):
@@ -233,4 +233,3 @@ if __name__=='__main__':
 			f_out.variables['nOverlaps'][:] = noverlaps
 	else:
 		print('Output file already exists, skipping',f_out)
-

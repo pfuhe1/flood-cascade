@@ -1,23 +1,23 @@
-# HDMA_river_processing.py
+# mizuRoute_rivernet.py
 #
 # Peter Uhe
 # May 27 2019
-# 
-# This script uses hydrography data from the MERIT-Hydro dataset. 
+#
+# This script uses hydrography data from the MERIT-Hydro dataset.
 # Uses stream network shapefiles calculated using TauDEM, with additional GIS processing
 # and produces the required river network inputs for the mizuRoute river routing model
 # E.g. https://mizuroute.readthedocs.io/en/develop/Input_data.html#river-network-data
-# 
-# 
+#
+#
 # This script needs requires python libraries for gdal and netCDF4
 #
 #
 ###############################################################################################
 # Input files:
-# 
+#
 # Some pre-processing was done in QGIS:
-# 
-#Requires outputs from TauDEM: stren_w3d8.tif, stren_net3d8.shp and catchment mask (basins3.tif). 
+#
+#Requires outputs from TauDEM: stren_w3d8.tif, stren_net3d8.shp and catchment mask (basins3.tif).
 #
 #Catchment Mask (processing in QGIS):
 
@@ -26,13 +26,13 @@
 #3. Fix geometries
 
 
-#Catchments: 
+#Catchments:
 #1. Clip stren_w3d8.tif by catchment mask (calculated above)
 #2. GDAL Polygonize: 'Name of the field to create='LINENO', use 8-connectedness
 
 #Streams:
 #1. Select 'extract specific vertices' (vertex 0 for upstream points)
-#2. Clip result by catchment mask (calculated able). 
+#2. Clip result by catchment mask (calculated able).
 
 
 ###############################################################################################
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
 		###############################################################################################
 		# Process streams data
-		# 
+		#
 
 		# First load streams
 		dataSource = driver.Open(streams_path, 0)
@@ -104,12 +104,12 @@ if __name__ == '__main__':
 		lengths = np.array(lengths)
 		slopes = np.array(slopes)
 		down_ids = np.array(down_ids)
-		lat_up = np.array(lat_up)		
-		lon_up = np.array(lon_up)	
+		lat_up = np.array(lat_up)
+		lon_up = np.array(lon_up)
 
 		###############################################################################################
 		# Process catchments data
-		# 
+		#
 
 		# Load Catchments
 		dataSource = driver.Open(catchs_path, 0)
@@ -133,7 +133,7 @@ if __name__ == '__main__':
 			f_out.createDimension('segId',len(seg_ids))
 			f_out.createVariable('segId',np.int32,('segId'))
 			f_out.variables['segId'][:] = seg_ids
-	
+
 			f_out.createVariable('downsegId',np.int32,('segId'),fill_value=-999)
 			f_out.variables['downsegId'][:] = down_ids
 
@@ -160,7 +160,7 @@ if __name__ == '__main__':
 			f_out.createDimension('hruId',len(hru_ids))
 			f_out.createVariable('hruId',np.int32,('hruId'))
 			f_out.variables['hruId'][:] = hru_ids
-	
+
 			f_out.createVariable('hrusegId',np.int32,('hruId'),fill_value=-999)
 			f_out.variables['hrusegId'][:] = seg_ids_hru
 
@@ -169,4 +169,3 @@ if __name__ == '__main__':
 			f_out.variables['area'].units = 'm2'
 	else:
 		print('mizuroute ancillary file already exists, skipping',fnetcdf)
-	

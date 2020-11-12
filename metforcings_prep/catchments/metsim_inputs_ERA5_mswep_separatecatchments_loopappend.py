@@ -4,8 +4,8 @@ import numpy as np
 from multiprocessing import Pool
 import datetime
 
-# Peter Uhe Nov 2019: 
-# 
+# Peter Uhe Nov 2019:
+#
 # Read in global datasets of metsim/fuse input variables
 # Select data at indices for each catchment
 # Write out data for each catchment to netcdf
@@ -22,7 +22,7 @@ def process_catchment(grdcid,f_in,fpath_out,indices,points,areas,var,vardata):
 	if not os.path.exists(os.path.dirname(fpath_out)):
 		os.mkdir(os.path.dirname(fpath_out))
 	print(grdcid)
-	
+
 	catchment_area = 0.
 	timevals = np.array([])
 
@@ -52,7 +52,7 @@ def process_catchment(grdcid,f_in,fpath_out,indices,points,areas,var,vardata):
 		if not os.path.exists(fpath_out):
 			print('locationcheck',lat,lon,latvals[indices[0][0]],lonvals[indices[0][1]])
 
-					
+
 		for i,pt in enumerate(indices):
 			#print(i,end=':')
 			#sys.stdout.flush()
@@ -67,7 +67,7 @@ def process_catchment(grdcid,f_in,fpath_out,indices,points,areas,var,vardata):
 			if np.ma.is_masked(vardata[0,pt0,pt[1]]):
 				raise Exception('Error, invalid data')
 		# normalise weighted sum
-		
+
 		catchment_data = catchment_data/catchment_area
 		print('data_weighted',catchment_data[0],catchment_area)
 		ncret = write_nc_catchment(fpath_out,f_in,lat,lon,var_map,catchment_data,timevals)
@@ -106,7 +106,7 @@ def write_nc_catchment(fpath_out,f_in,lat,lon,var_map,vals,timevals):
 			f_out.variables['lon'].units = "degrees_east"
 			f_out.variables['lon'].axis = "X"
 			f_out.variables['lon'][:] = lon
-	
+
 			timevar = f_in.variables['time']
 			#print('intime',timevar)
 			f_out.createDimension('time',0)
@@ -126,8 +126,8 @@ def write_nc_catchment(fpath_out,f_in,lat,lon,var_map,vals,timevals):
 		print('Writing data')
 		nt = len(f_out.variables['time'])
 		f_out.variables['time'][nt:]=timevals
-		print('written time')	
-		
+		print('written time')
+
 		f_out.variables[var][nt:] = vals
 		print('written',var)
 	return True
@@ -165,16 +165,12 @@ with open(f_pkl2,'rb') as fdata:
 
 #############################################################################
 # Read in input data
-#nt = 14245
-#nt = 31
-#p = Pool(processes=6)
 for var,fpath_in in var_files.items():
 	firsttime = True
 
 	#############################################################################
 	# Loop over catchmentsn and calculate forcings
 	print('dictlen',len(indices_dict))
-	#for grdcid,indices in indices_dict.items():
 
 	# First read all the data for each input file (hopefully faster although takes more memory)
 	for infile in sorted(glob.glob(fpath_in)):
@@ -190,14 +186,8 @@ for var,fpath_in in var_files.items():
 				points  = points_dict[grdcid]
 				areas   = areas_dict[grdcid]
 				fpath_out = os.path.join(outdir,var,str(grdcid)+'_'+var+'_'+timeperiod+'.nc')
-				#ret = p.apply_async(process_catchment,(grdcid,fpath_in,fpath_out,nt,indices,points,areas,var,var_map))
-			
+
 				process_catchment(grdcid,f_in,fpath_out,indices,points,areas,var,vardata)
 		firsttime = False
 		f_in.close()
 		del(vardata)
-
-#p.close()
-#p.join()
-#print(ret.get())
-

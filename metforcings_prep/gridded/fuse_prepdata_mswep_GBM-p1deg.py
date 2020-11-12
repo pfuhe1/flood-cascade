@@ -1,8 +1,7 @@
 ''' Script to combine tas,pr,pet files for FUSE input
 Requires first:
-1. Run metsim_merged_MSWEP-p1deg.py (on Jasmin)
-2. Files copied to anthropocene (from /work/scratch-nompiio/pfu599/FUSE_inputs/GBM-p1deg)
-3. running metsim to produce pet (metsim seems to hang on jasmin- I/O issue?)
+1. Run metsim_merged_MSWEP-p1deg.py
+2. running metsim to produce pet
 
 Peter Uhe April 2020
 This script uses input files produced on Jasmin, then '''

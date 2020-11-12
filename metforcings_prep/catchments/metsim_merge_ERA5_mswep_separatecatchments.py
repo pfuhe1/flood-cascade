@@ -4,12 +4,9 @@ import numpy as np
 
 # Peter Uhe Nov 2019:
 #
-# Read in global datasets of metsim/fuse input variables
-# Select data at indices for each catchment
-# Write out data for each catchment to netcdf
+# Merges meterological inputs for catchments into single file
+# Run this script after `metsim_inputs_ERA5_mswep_separatecatchments_loopappend.py`
 #
-# This version: Use xarray for multi-file open with netcdf4 as this is not supported by netCDF4.MFDataset
-
 
 #############################################################################
 # Input paths
